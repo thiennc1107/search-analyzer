@@ -1,6 +1,6 @@
 # Determine if you have docker-compose or docker compose installed locally
 # If this does not work on your system, just set the name of the executable you have installed
-DCO_BIN := $(shell { command -v docker-compose || command -v docker compose; } 2>/dev/null)
+DCO_BIN := docker compose
 
 # Connect to the primary database
 .PHONY: db

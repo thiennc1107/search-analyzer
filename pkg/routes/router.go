@@ -65,18 +65,15 @@ func BuildRouter(c *services.Container) {
 }
 
 func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
+	auth := g.Group("", middleware.RequireAuthentication())
 	home := home{Controller: ctr}
-	g.GET("/", home.Get).Name = "home"
+	auth.GET("/", home.Get).Name = "home"
 
 	search := search{Controller: ctr}
-	g.GET("/search", search.Get).Name = "search"
+	auth.GET("/search", search.Get).Name = "search"
 
 	about := about{Controller: ctr}
-	g.GET("/about", about.Get).Name = "about"
-
-	contact := contact{Controller: ctr}
-	g.GET("/contact", contact.Get).Name = "contact"
-	g.POST("/contact", contact.Post).Name = "contact.post"
+	auth.GET("/about", about.Get).Name = "about"
 }
 
 func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {

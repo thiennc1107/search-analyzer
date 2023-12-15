@@ -24,8 +24,8 @@ func (c *home) Get(ctx echo.Context) error {
 	page.Layout = "main"
 	page.Name = "home"
 	page.Metatags.Description = "Welcome to the homepage."
-	page.Metatags.Keywords = []string{"Go", "MVC", "Web", "Software"}
-	page.Pager = controller.NewPager(ctx, 4)
+	page.Metatags.Keywords = []string{"Go", "MVC", "Web", "Software", "Search result", "Statistic"}
+	page.Pager = controller.NewPager(ctx, 10)
 	page.Data = c.fetchPosts(&page.Pager)
 
 	return c.RenderPage(ctx, page)

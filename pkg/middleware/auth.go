@@ -86,7 +86,7 @@ func RequireAuthentication() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			if u := c.Get(context.AuthenticatedUserKey); u == nil {
-				return echo.NewHTTPError(http.StatusUnauthorized)
+				return c.Redirect(http.StatusSeeOther, "/user/login")
 			}
 
 			return next(c)

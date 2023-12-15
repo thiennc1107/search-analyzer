@@ -4,10 +4,6 @@
     {{- end}}
 
     {{template "posts" .}}
-
-    {{- if not (eq .HTMX.Request.Target "posts")}}
-        {{template "file-msg" .}}
-    {{- end}}
 {{end}}
 
 {{define "top-content"}}
@@ -17,15 +13,14 @@
                 <h1 class="title">
                     Hello{{if .IsAuth}}, {{.AuthUser.Name}}{{end}}
                 </h1>
-                <h2 class="subtitle">{{if .IsAuth}}Welcome back!{{else}}Please login in to your account.{{end}}</h2>
             </div>
         </div>
     </section>
 
-    <section class="section">
-        <h1 class="title">Recent posts</h1>
+    <section class="section py-3">
+        <h1 class="title">Keywords summary</h1>
         <h2 class="subtitle">
-            Below is an example of both paging and AJAX fetching using HTMX
+            Below is the list of your uploaded keywords.
         </h2>
     </section>
 {{end}}
@@ -34,11 +29,6 @@
     <div id="posts">
         {{- range .Data}}
             <article class="media">
-                <figure class="media-left">
-                    <p class="image is-64x64">
-                        <img src="{{file "gopher.png"}}" alt="Gopher"/>
-                    </p>
-                </figure>
                 <div class="media-content">
                     <div class="content">
                         <p>
@@ -51,32 +41,21 @@
             </article>
         {{- end}}
 
-        <div class="field is-grouped is-grouped-centered">
-            {{- if not $.Pager.IsBeginning}}
-                <p class="control">
-                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/?page={{sub $.Pager.Page 1}}" hx-target="#posts">Previous page</button>
-                </p>
-            {{- end}}
-            {{- if not $.Pager.IsEnd}}
-                <p class="control">
-                    <button class="button is-primary" hx-swap="outerHTML" hx-get="/?page={{add $.Pager.Page 1}}" hx-target="#posts">Next page</button>
-                </p>
-            {{- end}}
+        <div class="column">
+            <p>Current page: {{$.Pager.Page}}</p>
+            <div class="field is-grouped is-grouped-centered pt-5">
+                {{- if not $.Pager.IsBeginning}}
+                    <p class="control">
+                        <button class="button is-primary" hx-swap="outerHTML" hx-get="/?page={{sub $.Pager.Page 1}}" hx-target="#posts">Previous page</button>
+                    </p>
+                {{- end}}
+                {{- if not $.Pager.IsEnd}}
+                    <p class="control">
+                        <button class="button is-primary" hx-swap="outerHTML" hx-get="/?page={{add $.Pager.Page 1}}" hx-target="#posts">Next page</button>
+                    </p>
+                {{- end}}
+            </div>
         </div>
-    </div>
-{{end}}
 
-{{define "file-msg"}}
-    <div class="block"></div>
-    <article class="message is-small is-warning" x-data="{show: true}" x-show="show">
-        <div class="message-header">
-            <p>Serving files</p>
-            <button class="delete is-small" aria-label="delete" @click="show = false"></button>
-        </div>
-        <div class="message-body">
-            In the example posts above, check how the file URL contains a cache-buster query parameter which changes only when the app is restarted.
-            Static files also contain cache-control headers which are configured via middleware.
-            You can also use AlpineJS to dismiss this message.
-        </div>
-    </article>
+    </div>
 {{end}}

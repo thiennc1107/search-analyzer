@@ -38,7 +38,7 @@ func (c *about) Get(ctx echo.Context) error {
 	// A simple example of how the Data field can contain anything you want to send to the templates
 	// even though you wouldn't normally send markup like this
 	page.Data = aboutData{
-		ShowCacheWarning: true,
+		ShowCacheWarning: false,
 		FrontendTabs: []aboutTab{
 			{
 				Title: "HTMX",
