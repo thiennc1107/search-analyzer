@@ -11,6 +11,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/mikestefanello/pagoda/ent/keywords"
 	"github.com/mikestefanello/pagoda/ent/passwordtoken"
 	"github.com/mikestefanello/pagoda/ent/predicate"
 	"github.com/mikestefanello/pagoda/ent/user"
@@ -25,9 +26,687 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
+	TypeKeywords      = "Keywords"
 	TypePasswordToken = "PasswordToken"
 	TypeUser          = "User"
 )
+
+// KeywordsMutation represents an operation that mutates the Keywords nodes in the graph.
+type KeywordsMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *int
+	status                  *keywords.Status
+	ads_amount              *int
+	addads_amount           *int
+	links                   *int
+	addlinks                *int
+	search_result_amount    *int
+	addsearch_result_amount *int
+	html_code               *int
+	addhtml_code            *int
+	clearedFields           map[string]struct{}
+	done                    bool
+	oldValue                func(context.Context) (*Keywords, error)
+	predicates              []predicate.Keywords
+}
+
+var _ ent.Mutation = (*KeywordsMutation)(nil)
+
+// keywordsOption allows management of the mutation configuration using functional options.
+type keywordsOption func(*KeywordsMutation)
+
+// newKeywordsMutation creates new mutation for the Keywords entity.
+func newKeywordsMutation(c config, op Op, opts ...keywordsOption) *KeywordsMutation {
+	m := &KeywordsMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeKeywords,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withKeywordsID sets the ID field of the mutation.
+func withKeywordsID(id int) keywordsOption {
+	return func(m *KeywordsMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Keywords
+		)
+		m.oldValue = func(ctx context.Context) (*Keywords, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Keywords.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withKeywords sets the old Keywords of the mutation.
+func withKeywords(node *Keywords) keywordsOption {
+	return func(m *KeywordsMutation) {
+		m.oldValue = func(context.Context) (*Keywords, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m KeywordsMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m KeywordsMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *KeywordsMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *KeywordsMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Keywords.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetStatus sets the "status" field.
+func (m *KeywordsMutation) SetStatus(k keywords.Status) {
+	m.status = &k
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *KeywordsMutation) Status() (r keywords.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Keywords entity.
+// If the Keywords object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KeywordsMutation) OldStatus(ctx context.Context) (v keywords.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *KeywordsMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetAdsAmount sets the "ads_amount" field.
+func (m *KeywordsMutation) SetAdsAmount(i int) {
+	m.ads_amount = &i
+	m.addads_amount = nil
+}
+
+// AdsAmount returns the value of the "ads_amount" field in the mutation.
+func (m *KeywordsMutation) AdsAmount() (r int, exists bool) {
+	v := m.ads_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAdsAmount returns the old "ads_amount" field's value of the Keywords entity.
+// If the Keywords object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KeywordsMutation) OldAdsAmount(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAdsAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAdsAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAdsAmount: %w", err)
+	}
+	return oldValue.AdsAmount, nil
+}
+
+// AddAdsAmount adds i to the "ads_amount" field.
+func (m *KeywordsMutation) AddAdsAmount(i int) {
+	if m.addads_amount != nil {
+		*m.addads_amount += i
+	} else {
+		m.addads_amount = &i
+	}
+}
+
+// AddedAdsAmount returns the value that was added to the "ads_amount" field in this mutation.
+func (m *KeywordsMutation) AddedAdsAmount() (r int, exists bool) {
+	v := m.addads_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAdsAmount resets all changes to the "ads_amount" field.
+func (m *KeywordsMutation) ResetAdsAmount() {
+	m.ads_amount = nil
+	m.addads_amount = nil
+}
+
+// SetLinks sets the "links" field.
+func (m *KeywordsMutation) SetLinks(i int) {
+	m.links = &i
+	m.addlinks = nil
+}
+
+// Links returns the value of the "links" field in the mutation.
+func (m *KeywordsMutation) Links() (r int, exists bool) {
+	v := m.links
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLinks returns the old "links" field's value of the Keywords entity.
+// If the Keywords object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KeywordsMutation) OldLinks(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLinks is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLinks requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLinks: %w", err)
+	}
+	return oldValue.Links, nil
+}
+
+// AddLinks adds i to the "links" field.
+func (m *KeywordsMutation) AddLinks(i int) {
+	if m.addlinks != nil {
+		*m.addlinks += i
+	} else {
+		m.addlinks = &i
+	}
+}
+
+// AddedLinks returns the value that was added to the "links" field in this mutation.
+func (m *KeywordsMutation) AddedLinks() (r int, exists bool) {
+	v := m.addlinks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLinks resets all changes to the "links" field.
+func (m *KeywordsMutation) ResetLinks() {
+	m.links = nil
+	m.addlinks = nil
+}
+
+// SetSearchResultAmount sets the "search_result_amount" field.
+func (m *KeywordsMutation) SetSearchResultAmount(i int) {
+	m.search_result_amount = &i
+	m.addsearch_result_amount = nil
+}
+
+// SearchResultAmount returns the value of the "search_result_amount" field in the mutation.
+func (m *KeywordsMutation) SearchResultAmount() (r int, exists bool) {
+	v := m.search_result_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSearchResultAmount returns the old "search_result_amount" field's value of the Keywords entity.
+// If the Keywords object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KeywordsMutation) OldSearchResultAmount(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSearchResultAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSearchResultAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSearchResultAmount: %w", err)
+	}
+	return oldValue.SearchResultAmount, nil
+}
+
+// AddSearchResultAmount adds i to the "search_result_amount" field.
+func (m *KeywordsMutation) AddSearchResultAmount(i int) {
+	if m.addsearch_result_amount != nil {
+		*m.addsearch_result_amount += i
+	} else {
+		m.addsearch_result_amount = &i
+	}
+}
+
+// AddedSearchResultAmount returns the value that was added to the "search_result_amount" field in this mutation.
+func (m *KeywordsMutation) AddedSearchResultAmount() (r int, exists bool) {
+	v := m.addsearch_result_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSearchResultAmount resets all changes to the "search_result_amount" field.
+func (m *KeywordsMutation) ResetSearchResultAmount() {
+	m.search_result_amount = nil
+	m.addsearch_result_amount = nil
+}
+
+// SetHTMLCode sets the "html_code" field.
+func (m *KeywordsMutation) SetHTMLCode(i int) {
+	m.html_code = &i
+	m.addhtml_code = nil
+}
+
+// HTMLCode returns the value of the "html_code" field in the mutation.
+func (m *KeywordsMutation) HTMLCode() (r int, exists bool) {
+	v := m.html_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHTMLCode returns the old "html_code" field's value of the Keywords entity.
+// If the Keywords object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KeywordsMutation) OldHTMLCode(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHTMLCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHTMLCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHTMLCode: %w", err)
+	}
+	return oldValue.HTMLCode, nil
+}
+
+// AddHTMLCode adds i to the "html_code" field.
+func (m *KeywordsMutation) AddHTMLCode(i int) {
+	if m.addhtml_code != nil {
+		*m.addhtml_code += i
+	} else {
+		m.addhtml_code = &i
+	}
+}
+
+// AddedHTMLCode returns the value that was added to the "html_code" field in this mutation.
+func (m *KeywordsMutation) AddedHTMLCode() (r int, exists bool) {
+	v := m.addhtml_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetHTMLCode resets all changes to the "html_code" field.
+func (m *KeywordsMutation) ResetHTMLCode() {
+	m.html_code = nil
+	m.addhtml_code = nil
+}
+
+// Where appends a list predicates to the KeywordsMutation builder.
+func (m *KeywordsMutation) Where(ps ...predicate.Keywords) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the KeywordsMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *KeywordsMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Keywords, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *KeywordsMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *KeywordsMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Keywords).
+func (m *KeywordsMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *KeywordsMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.status != nil {
+		fields = append(fields, keywords.FieldStatus)
+	}
+	if m.ads_amount != nil {
+		fields = append(fields, keywords.FieldAdsAmount)
+	}
+	if m.links != nil {
+		fields = append(fields, keywords.FieldLinks)
+	}
+	if m.search_result_amount != nil {
+		fields = append(fields, keywords.FieldSearchResultAmount)
+	}
+	if m.html_code != nil {
+		fields = append(fields, keywords.FieldHTMLCode)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *KeywordsMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case keywords.FieldStatus:
+		return m.Status()
+	case keywords.FieldAdsAmount:
+		return m.AdsAmount()
+	case keywords.FieldLinks:
+		return m.Links()
+	case keywords.FieldSearchResultAmount:
+		return m.SearchResultAmount()
+	case keywords.FieldHTMLCode:
+		return m.HTMLCode()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *KeywordsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case keywords.FieldStatus:
+		return m.OldStatus(ctx)
+	case keywords.FieldAdsAmount:
+		return m.OldAdsAmount(ctx)
+	case keywords.FieldLinks:
+		return m.OldLinks(ctx)
+	case keywords.FieldSearchResultAmount:
+		return m.OldSearchResultAmount(ctx)
+	case keywords.FieldHTMLCode:
+		return m.OldHTMLCode(ctx)
+	}
+	return nil, fmt.Errorf("unknown Keywords field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *KeywordsMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case keywords.FieldStatus:
+		v, ok := value.(keywords.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case keywords.FieldAdsAmount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAdsAmount(v)
+		return nil
+	case keywords.FieldLinks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLinks(v)
+		return nil
+	case keywords.FieldSearchResultAmount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSearchResultAmount(v)
+		return nil
+	case keywords.FieldHTMLCode:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHTMLCode(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Keywords field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *KeywordsMutation) AddedFields() []string {
+	var fields []string
+	if m.addads_amount != nil {
+		fields = append(fields, keywords.FieldAdsAmount)
+	}
+	if m.addlinks != nil {
+		fields = append(fields, keywords.FieldLinks)
+	}
+	if m.addsearch_result_amount != nil {
+		fields = append(fields, keywords.FieldSearchResultAmount)
+	}
+	if m.addhtml_code != nil {
+		fields = append(fields, keywords.FieldHTMLCode)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *KeywordsMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case keywords.FieldAdsAmount:
+		return m.AddedAdsAmount()
+	case keywords.FieldLinks:
+		return m.AddedLinks()
+	case keywords.FieldSearchResultAmount:
+		return m.AddedSearchResultAmount()
+	case keywords.FieldHTMLCode:
+		return m.AddedHTMLCode()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *KeywordsMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case keywords.FieldAdsAmount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAdsAmount(v)
+		return nil
+	case keywords.FieldLinks:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLinks(v)
+		return nil
+	case keywords.FieldSearchResultAmount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSearchResultAmount(v)
+		return nil
+	case keywords.FieldHTMLCode:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHTMLCode(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Keywords numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *KeywordsMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *KeywordsMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *KeywordsMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Keywords nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *KeywordsMutation) ResetField(name string) error {
+	switch name {
+	case keywords.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case keywords.FieldAdsAmount:
+		m.ResetAdsAmount()
+		return nil
+	case keywords.FieldLinks:
+		m.ResetLinks()
+		return nil
+	case keywords.FieldSearchResultAmount:
+		m.ResetSearchResultAmount()
+		return nil
+	case keywords.FieldHTMLCode:
+		m.ResetHTMLCode()
+		return nil
+	}
+	return fmt.Errorf("unknown Keywords field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *KeywordsMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *KeywordsMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *KeywordsMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *KeywordsMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *KeywordsMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *KeywordsMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *KeywordsMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Keywords unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *KeywordsMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Keywords edge %s", name)
+}
 
 // PasswordTokenMutation represents an operation that mutates the PasswordToken nodes in the graph.
 type PasswordTokenMutation struct {

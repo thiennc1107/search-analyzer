@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/mikestefanello/pagoda/ent/keywords"
 	"github.com/mikestefanello/pagoda/ent/passwordtoken"
 	"github.com/mikestefanello/pagoda/ent/user"
 )
@@ -24,6 +25,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Keywords is the client for interacting with the Keywords builders.
+	Keywords *KeywordsClient
 	// PasswordToken is the client for interacting with the PasswordToken builders.
 	PasswordToken *PasswordTokenClient
 	// User is the client for interacting with the User builders.
@@ -39,6 +42,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Keywords = NewKeywordsClient(c.config)
 	c.PasswordToken = NewPasswordTokenClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -133,6 +137,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:           ctx,
 		config:        cfg,
+		Keywords:      NewKeywordsClient(cfg),
 		PasswordToken: NewPasswordTokenClient(cfg),
 		User:          NewUserClient(cfg),
 	}, nil
@@ -154,6 +159,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:           ctx,
 		config:        cfg,
+		Keywords:      NewKeywordsClient(cfg),
 		PasswordToken: NewPasswordTokenClient(cfg),
 		User:          NewUserClient(cfg),
 	}, nil
@@ -162,7 +168,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		PasswordToken.
+//		Keywords.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -184,6 +190,7 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Keywords.Use(hooks...)
 	c.PasswordToken.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -191,6 +198,7 @@ func (c *Client) Use(hooks ...Hook) {
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.Keywords.Intercept(interceptors...)
 	c.PasswordToken.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
@@ -198,12 +206,147 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *KeywordsMutation:
+		return c.Keywords.mutate(ctx, m)
 	case *PasswordTokenMutation:
 		return c.PasswordToken.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// KeywordsClient is a client for the Keywords schema.
+type KeywordsClient struct {
+	config
+}
+
+// NewKeywordsClient returns a client for the Keywords from the given config.
+func NewKeywordsClient(c config) *KeywordsClient {
+	return &KeywordsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `keywords.Hooks(f(g(h())))`.
+func (c *KeywordsClient) Use(hooks ...Hook) {
+	c.hooks.Keywords = append(c.hooks.Keywords, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `keywords.Intercept(f(g(h())))`.
+func (c *KeywordsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Keywords = append(c.inters.Keywords, interceptors...)
+}
+
+// Create returns a builder for creating a Keywords entity.
+func (c *KeywordsClient) Create() *KeywordsCreate {
+	mutation := newKeywordsMutation(c.config, OpCreate)
+	return &KeywordsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Keywords entities.
+func (c *KeywordsClient) CreateBulk(builders ...*KeywordsCreate) *KeywordsCreateBulk {
+	return &KeywordsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *KeywordsClient) MapCreateBulk(slice any, setFunc func(*KeywordsCreate, int)) *KeywordsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &KeywordsCreateBulk{err: fmt.Errorf("calling to KeywordsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*KeywordsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &KeywordsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Keywords.
+func (c *KeywordsClient) Update() *KeywordsUpdate {
+	mutation := newKeywordsMutation(c.config, OpUpdate)
+	return &KeywordsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *KeywordsClient) UpdateOne(k *Keywords) *KeywordsUpdateOne {
+	mutation := newKeywordsMutation(c.config, OpUpdateOne, withKeywords(k))
+	return &KeywordsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *KeywordsClient) UpdateOneID(id int) *KeywordsUpdateOne {
+	mutation := newKeywordsMutation(c.config, OpUpdateOne, withKeywordsID(id))
+	return &KeywordsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Keywords.
+func (c *KeywordsClient) Delete() *KeywordsDelete {
+	mutation := newKeywordsMutation(c.config, OpDelete)
+	return &KeywordsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *KeywordsClient) DeleteOne(k *Keywords) *KeywordsDeleteOne {
+	return c.DeleteOneID(k.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *KeywordsClient) DeleteOneID(id int) *KeywordsDeleteOne {
+	builder := c.Delete().Where(keywords.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &KeywordsDeleteOne{builder}
+}
+
+// Query returns a query builder for Keywords.
+func (c *KeywordsClient) Query() *KeywordsQuery {
+	return &KeywordsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeKeywords},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Keywords entity by its id.
+func (c *KeywordsClient) Get(ctx context.Context, id int) (*Keywords, error) {
+	return c.Query().Where(keywords.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *KeywordsClient) GetX(ctx context.Context, id int) *Keywords {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *KeywordsClient) Hooks() []Hook {
+	return c.hooks.Keywords
+}
+
+// Interceptors returns the client interceptors.
+func (c *KeywordsClient) Interceptors() []Interceptor {
+	return c.inters.Keywords
+}
+
+func (c *KeywordsClient) mutate(ctx context.Context, m *KeywordsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&KeywordsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&KeywordsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&KeywordsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&KeywordsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Keywords mutation op: %q", m.Op())
 	}
 }
 
@@ -509,9 +652,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		PasswordToken, User []ent.Hook
+		Keywords, PasswordToken, User []ent.Hook
 	}
 	inters struct {
-		PasswordToken, User []ent.Interceptor
+		Keywords, PasswordToken, User []ent.Interceptor
 	}
 )

@@ -8,6 +8,21 @@ import (
 )
 
 var (
+	// KeywordsColumns holds the columns for the "keywords" table.
+	KeywordsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "failed", "processing", "finished"}},
+		{Name: "ads_amount", Type: field.TypeInt},
+		{Name: "links", Type: field.TypeInt},
+		{Name: "search_result_amount", Type: field.TypeInt},
+		{Name: "html_code", Type: field.TypeInt},
+	}
+	// KeywordsTable holds the schema information for the "keywords" table.
+	KeywordsTable = &schema.Table{
+		Name:       "keywords",
+		Columns:    KeywordsColumns,
+		PrimaryKey: []*schema.Column{KeywordsColumns[0]},
+	}
 	// PasswordTokensColumns holds the columns for the "password_tokens" table.
 	PasswordTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -46,6 +61,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		KeywordsTable,
 		PasswordTokensTable,
 		UsersTable,
 	}

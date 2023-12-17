@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Keywords is the predicate function for keywords builders.
+type Keywords func(*sql.Selector)
+
 // PasswordToken is the predicate function for passwordtoken builders.
 type PasswordToken func(*sql.Selector)
 

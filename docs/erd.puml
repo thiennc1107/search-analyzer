@@ -19,10 +19,10 @@ entity "password_token" as passwordToken {
 
 entity "keyword" as kw {
     * id: integer <<PK>>
-    status: varchar
-    adword_ad_amount: integer
+    status: enum(pending, processing, failed, finished)
+    ads_amount: integer
     links_amount: integer
-    search_result_amount: integer
+    search_results_amount: integer
     html_code: text
 }
 
