@@ -14,17 +14,17 @@ type Keywords struct {
 // Fields of the Keywords.
 func (Keywords) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("keyword"),
 		field.Enum("status").
 			Values(
-				enum.StatusPending,
 				enum.StatusFailed,
 				enum.StatusProcessing,
 				enum.StatusFinished,
 			),
 		field.Int("ads_amount"),
-		field.Int("links"),
+		field.Int("links_amount"),
 		field.Int("search_result_amount"),
-		field.Int("html_code"),
+		field.Text("html_code"),
 	}
 }
 

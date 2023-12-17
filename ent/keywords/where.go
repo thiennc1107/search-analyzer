@@ -52,14 +52,19 @@ func IDLTE(id int) predicate.Keywords {
 	return predicate.Keywords(sql.FieldLTE(FieldID, id))
 }
 
+// Keyword applies equality check predicate on the "keyword" field. It's identical to KeywordEQ.
+func Keyword(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldEQ(FieldKeyword, v))
+}
+
 // AdsAmount applies equality check predicate on the "ads_amount" field. It's identical to AdsAmountEQ.
 func AdsAmount(v int) predicate.Keywords {
 	return predicate.Keywords(sql.FieldEQ(FieldAdsAmount, v))
 }
 
-// Links applies equality check predicate on the "links" field. It's identical to LinksEQ.
-func Links(v int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldEQ(FieldLinks, v))
+// LinksAmount applies equality check predicate on the "links_amount" field. It's identical to LinksAmountEQ.
+func LinksAmount(v int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldEQ(FieldLinksAmount, v))
 }
 
 // SearchResultAmount applies equality check predicate on the "search_result_amount" field. It's identical to SearchResultAmountEQ.
@@ -68,8 +73,73 @@ func SearchResultAmount(v int) predicate.Keywords {
 }
 
 // HTMLCode applies equality check predicate on the "html_code" field. It's identical to HTMLCodeEQ.
-func HTMLCode(v int) predicate.Keywords {
+func HTMLCode(v string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldEQ(FieldHTMLCode, v))
+}
+
+// KeywordEQ applies the EQ predicate on the "keyword" field.
+func KeywordEQ(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldEQ(FieldKeyword, v))
+}
+
+// KeywordNEQ applies the NEQ predicate on the "keyword" field.
+func KeywordNEQ(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldNEQ(FieldKeyword, v))
+}
+
+// KeywordIn applies the In predicate on the "keyword" field.
+func KeywordIn(vs ...string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldIn(FieldKeyword, vs...))
+}
+
+// KeywordNotIn applies the NotIn predicate on the "keyword" field.
+func KeywordNotIn(vs ...string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldNotIn(FieldKeyword, vs...))
+}
+
+// KeywordGT applies the GT predicate on the "keyword" field.
+func KeywordGT(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldGT(FieldKeyword, v))
+}
+
+// KeywordGTE applies the GTE predicate on the "keyword" field.
+func KeywordGTE(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldGTE(FieldKeyword, v))
+}
+
+// KeywordLT applies the LT predicate on the "keyword" field.
+func KeywordLT(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldLT(FieldKeyword, v))
+}
+
+// KeywordLTE applies the LTE predicate on the "keyword" field.
+func KeywordLTE(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldLTE(FieldKeyword, v))
+}
+
+// KeywordContains applies the Contains predicate on the "keyword" field.
+func KeywordContains(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldContains(FieldKeyword, v))
+}
+
+// KeywordHasPrefix applies the HasPrefix predicate on the "keyword" field.
+func KeywordHasPrefix(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldHasPrefix(FieldKeyword, v))
+}
+
+// KeywordHasSuffix applies the HasSuffix predicate on the "keyword" field.
+func KeywordHasSuffix(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldHasSuffix(FieldKeyword, v))
+}
+
+// KeywordEqualFold applies the EqualFold predicate on the "keyword" field.
+func KeywordEqualFold(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldEqualFold(FieldKeyword, v))
+}
+
+// KeywordContainsFold applies the ContainsFold predicate on the "keyword" field.
+func KeywordContainsFold(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldContainsFold(FieldKeyword, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
@@ -132,44 +202,44 @@ func AdsAmountLTE(v int) predicate.Keywords {
 	return predicate.Keywords(sql.FieldLTE(FieldAdsAmount, v))
 }
 
-// LinksEQ applies the EQ predicate on the "links" field.
-func LinksEQ(v int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldEQ(FieldLinks, v))
+// LinksAmountEQ applies the EQ predicate on the "links_amount" field.
+func LinksAmountEQ(v int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldEQ(FieldLinksAmount, v))
 }
 
-// LinksNEQ applies the NEQ predicate on the "links" field.
-func LinksNEQ(v int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldNEQ(FieldLinks, v))
+// LinksAmountNEQ applies the NEQ predicate on the "links_amount" field.
+func LinksAmountNEQ(v int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldNEQ(FieldLinksAmount, v))
 }
 
-// LinksIn applies the In predicate on the "links" field.
-func LinksIn(vs ...int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldIn(FieldLinks, vs...))
+// LinksAmountIn applies the In predicate on the "links_amount" field.
+func LinksAmountIn(vs ...int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldIn(FieldLinksAmount, vs...))
 }
 
-// LinksNotIn applies the NotIn predicate on the "links" field.
-func LinksNotIn(vs ...int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldNotIn(FieldLinks, vs...))
+// LinksAmountNotIn applies the NotIn predicate on the "links_amount" field.
+func LinksAmountNotIn(vs ...int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldNotIn(FieldLinksAmount, vs...))
 }
 
-// LinksGT applies the GT predicate on the "links" field.
-func LinksGT(v int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldGT(FieldLinks, v))
+// LinksAmountGT applies the GT predicate on the "links_amount" field.
+func LinksAmountGT(v int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldGT(FieldLinksAmount, v))
 }
 
-// LinksGTE applies the GTE predicate on the "links" field.
-func LinksGTE(v int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldGTE(FieldLinks, v))
+// LinksAmountGTE applies the GTE predicate on the "links_amount" field.
+func LinksAmountGTE(v int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldGTE(FieldLinksAmount, v))
 }
 
-// LinksLT applies the LT predicate on the "links" field.
-func LinksLT(v int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldLT(FieldLinks, v))
+// LinksAmountLT applies the LT predicate on the "links_amount" field.
+func LinksAmountLT(v int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldLT(FieldLinksAmount, v))
 }
 
-// LinksLTE applies the LTE predicate on the "links" field.
-func LinksLTE(v int) predicate.Keywords {
-	return predicate.Keywords(sql.FieldLTE(FieldLinks, v))
+// LinksAmountLTE applies the LTE predicate on the "links_amount" field.
+func LinksAmountLTE(v int) predicate.Keywords {
+	return predicate.Keywords(sql.FieldLTE(FieldLinksAmount, v))
 }
 
 // SearchResultAmountEQ applies the EQ predicate on the "search_result_amount" field.
@@ -213,43 +283,68 @@ func SearchResultAmountLTE(v int) predicate.Keywords {
 }
 
 // HTMLCodeEQ applies the EQ predicate on the "html_code" field.
-func HTMLCodeEQ(v int) predicate.Keywords {
+func HTMLCodeEQ(v string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldEQ(FieldHTMLCode, v))
 }
 
 // HTMLCodeNEQ applies the NEQ predicate on the "html_code" field.
-func HTMLCodeNEQ(v int) predicate.Keywords {
+func HTMLCodeNEQ(v string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldNEQ(FieldHTMLCode, v))
 }
 
 // HTMLCodeIn applies the In predicate on the "html_code" field.
-func HTMLCodeIn(vs ...int) predicate.Keywords {
+func HTMLCodeIn(vs ...string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldIn(FieldHTMLCode, vs...))
 }
 
 // HTMLCodeNotIn applies the NotIn predicate on the "html_code" field.
-func HTMLCodeNotIn(vs ...int) predicate.Keywords {
+func HTMLCodeNotIn(vs ...string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldNotIn(FieldHTMLCode, vs...))
 }
 
 // HTMLCodeGT applies the GT predicate on the "html_code" field.
-func HTMLCodeGT(v int) predicate.Keywords {
+func HTMLCodeGT(v string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldGT(FieldHTMLCode, v))
 }
 
 // HTMLCodeGTE applies the GTE predicate on the "html_code" field.
-func HTMLCodeGTE(v int) predicate.Keywords {
+func HTMLCodeGTE(v string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldGTE(FieldHTMLCode, v))
 }
 
 // HTMLCodeLT applies the LT predicate on the "html_code" field.
-func HTMLCodeLT(v int) predicate.Keywords {
+func HTMLCodeLT(v string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldLT(FieldHTMLCode, v))
 }
 
 // HTMLCodeLTE applies the LTE predicate on the "html_code" field.
-func HTMLCodeLTE(v int) predicate.Keywords {
+func HTMLCodeLTE(v string) predicate.Keywords {
 	return predicate.Keywords(sql.FieldLTE(FieldHTMLCode, v))
+}
+
+// HTMLCodeContains applies the Contains predicate on the "html_code" field.
+func HTMLCodeContains(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldContains(FieldHTMLCode, v))
+}
+
+// HTMLCodeHasPrefix applies the HasPrefix predicate on the "html_code" field.
+func HTMLCodeHasPrefix(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldHasPrefix(FieldHTMLCode, v))
+}
+
+// HTMLCodeHasSuffix applies the HasSuffix predicate on the "html_code" field.
+func HTMLCodeHasSuffix(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldHasSuffix(FieldHTMLCode, v))
+}
+
+// HTMLCodeEqualFold applies the EqualFold predicate on the "html_code" field.
+func HTMLCodeEqualFold(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldEqualFold(FieldHTMLCode, v))
+}
+
+// HTMLCodeContainsFold applies the ContainsFold predicate on the "html_code" field.
+func HTMLCodeContainsFold(v string) predicate.Keywords {
+	return predicate.Keywords(sql.FieldContainsFold(FieldHTMLCode, v))
 }
 
 // And groups predicates with the AND operator between them.

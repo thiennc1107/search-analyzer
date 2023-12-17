@@ -27,6 +27,20 @@ func (ku *KeywordsUpdate) Where(ps ...predicate.Keywords) *KeywordsUpdate {
 	return ku
 }
 
+// SetKeyword sets the "keyword" field.
+func (ku *KeywordsUpdate) SetKeyword(s string) *KeywordsUpdate {
+	ku.mutation.SetKeyword(s)
+	return ku
+}
+
+// SetNillableKeyword sets the "keyword" field if the given value is not nil.
+func (ku *KeywordsUpdate) SetNillableKeyword(s *string) *KeywordsUpdate {
+	if s != nil {
+		ku.SetKeyword(*s)
+	}
+	return ku
+}
+
 // SetStatus sets the "status" field.
 func (ku *KeywordsUpdate) SetStatus(k keywords.Status) *KeywordsUpdate {
 	ku.mutation.SetStatus(k)
@@ -62,24 +76,24 @@ func (ku *KeywordsUpdate) AddAdsAmount(i int) *KeywordsUpdate {
 	return ku
 }
 
-// SetLinks sets the "links" field.
-func (ku *KeywordsUpdate) SetLinks(i int) *KeywordsUpdate {
-	ku.mutation.ResetLinks()
-	ku.mutation.SetLinks(i)
+// SetLinksAmount sets the "links_amount" field.
+func (ku *KeywordsUpdate) SetLinksAmount(i int) *KeywordsUpdate {
+	ku.mutation.ResetLinksAmount()
+	ku.mutation.SetLinksAmount(i)
 	return ku
 }
 
-// SetNillableLinks sets the "links" field if the given value is not nil.
-func (ku *KeywordsUpdate) SetNillableLinks(i *int) *KeywordsUpdate {
+// SetNillableLinksAmount sets the "links_amount" field if the given value is not nil.
+func (ku *KeywordsUpdate) SetNillableLinksAmount(i *int) *KeywordsUpdate {
 	if i != nil {
-		ku.SetLinks(*i)
+		ku.SetLinksAmount(*i)
 	}
 	return ku
 }
 
-// AddLinks adds i to the "links" field.
-func (ku *KeywordsUpdate) AddLinks(i int) *KeywordsUpdate {
-	ku.mutation.AddLinks(i)
+// AddLinksAmount adds i to the "links_amount" field.
+func (ku *KeywordsUpdate) AddLinksAmount(i int) *KeywordsUpdate {
+	ku.mutation.AddLinksAmount(i)
 	return ku
 }
 
@@ -105,23 +119,16 @@ func (ku *KeywordsUpdate) AddSearchResultAmount(i int) *KeywordsUpdate {
 }
 
 // SetHTMLCode sets the "html_code" field.
-func (ku *KeywordsUpdate) SetHTMLCode(i int) *KeywordsUpdate {
-	ku.mutation.ResetHTMLCode()
-	ku.mutation.SetHTMLCode(i)
+func (ku *KeywordsUpdate) SetHTMLCode(s string) *KeywordsUpdate {
+	ku.mutation.SetHTMLCode(s)
 	return ku
 }
 
 // SetNillableHTMLCode sets the "html_code" field if the given value is not nil.
-func (ku *KeywordsUpdate) SetNillableHTMLCode(i *int) *KeywordsUpdate {
-	if i != nil {
-		ku.SetHTMLCode(*i)
+func (ku *KeywordsUpdate) SetNillableHTMLCode(s *string) *KeywordsUpdate {
+	if s != nil {
+		ku.SetHTMLCode(*s)
 	}
-	return ku
-}
-
-// AddHTMLCode adds i to the "html_code" field.
-func (ku *KeywordsUpdate) AddHTMLCode(i int) *KeywordsUpdate {
-	ku.mutation.AddHTMLCode(i)
 	return ku
 }
 
@@ -179,6 +186,9 @@ func (ku *KeywordsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := ku.mutation.Keyword(); ok {
+		_spec.SetField(keywords.FieldKeyword, field.TypeString, value)
+	}
 	if value, ok := ku.mutation.Status(); ok {
 		_spec.SetField(keywords.FieldStatus, field.TypeEnum, value)
 	}
@@ -188,11 +198,11 @@ func (ku *KeywordsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ku.mutation.AddedAdsAmount(); ok {
 		_spec.AddField(keywords.FieldAdsAmount, field.TypeInt, value)
 	}
-	if value, ok := ku.mutation.Links(); ok {
-		_spec.SetField(keywords.FieldLinks, field.TypeInt, value)
+	if value, ok := ku.mutation.LinksAmount(); ok {
+		_spec.SetField(keywords.FieldLinksAmount, field.TypeInt, value)
 	}
-	if value, ok := ku.mutation.AddedLinks(); ok {
-		_spec.AddField(keywords.FieldLinks, field.TypeInt, value)
+	if value, ok := ku.mutation.AddedLinksAmount(); ok {
+		_spec.AddField(keywords.FieldLinksAmount, field.TypeInt, value)
 	}
 	if value, ok := ku.mutation.SearchResultAmount(); ok {
 		_spec.SetField(keywords.FieldSearchResultAmount, field.TypeInt, value)
@@ -201,10 +211,7 @@ func (ku *KeywordsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(keywords.FieldSearchResultAmount, field.TypeInt, value)
 	}
 	if value, ok := ku.mutation.HTMLCode(); ok {
-		_spec.SetField(keywords.FieldHTMLCode, field.TypeInt, value)
-	}
-	if value, ok := ku.mutation.AddedHTMLCode(); ok {
-		_spec.AddField(keywords.FieldHTMLCode, field.TypeInt, value)
+		_spec.SetField(keywords.FieldHTMLCode, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ku.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -224,6 +231,20 @@ type KeywordsUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *KeywordsMutation
+}
+
+// SetKeyword sets the "keyword" field.
+func (kuo *KeywordsUpdateOne) SetKeyword(s string) *KeywordsUpdateOne {
+	kuo.mutation.SetKeyword(s)
+	return kuo
+}
+
+// SetNillableKeyword sets the "keyword" field if the given value is not nil.
+func (kuo *KeywordsUpdateOne) SetNillableKeyword(s *string) *KeywordsUpdateOne {
+	if s != nil {
+		kuo.SetKeyword(*s)
+	}
+	return kuo
 }
 
 // SetStatus sets the "status" field.
@@ -261,24 +282,24 @@ func (kuo *KeywordsUpdateOne) AddAdsAmount(i int) *KeywordsUpdateOne {
 	return kuo
 }
 
-// SetLinks sets the "links" field.
-func (kuo *KeywordsUpdateOne) SetLinks(i int) *KeywordsUpdateOne {
-	kuo.mutation.ResetLinks()
-	kuo.mutation.SetLinks(i)
+// SetLinksAmount sets the "links_amount" field.
+func (kuo *KeywordsUpdateOne) SetLinksAmount(i int) *KeywordsUpdateOne {
+	kuo.mutation.ResetLinksAmount()
+	kuo.mutation.SetLinksAmount(i)
 	return kuo
 }
 
-// SetNillableLinks sets the "links" field if the given value is not nil.
-func (kuo *KeywordsUpdateOne) SetNillableLinks(i *int) *KeywordsUpdateOne {
+// SetNillableLinksAmount sets the "links_amount" field if the given value is not nil.
+func (kuo *KeywordsUpdateOne) SetNillableLinksAmount(i *int) *KeywordsUpdateOne {
 	if i != nil {
-		kuo.SetLinks(*i)
+		kuo.SetLinksAmount(*i)
 	}
 	return kuo
 }
 
-// AddLinks adds i to the "links" field.
-func (kuo *KeywordsUpdateOne) AddLinks(i int) *KeywordsUpdateOne {
-	kuo.mutation.AddLinks(i)
+// AddLinksAmount adds i to the "links_amount" field.
+func (kuo *KeywordsUpdateOne) AddLinksAmount(i int) *KeywordsUpdateOne {
+	kuo.mutation.AddLinksAmount(i)
 	return kuo
 }
 
@@ -304,23 +325,16 @@ func (kuo *KeywordsUpdateOne) AddSearchResultAmount(i int) *KeywordsUpdateOne {
 }
 
 // SetHTMLCode sets the "html_code" field.
-func (kuo *KeywordsUpdateOne) SetHTMLCode(i int) *KeywordsUpdateOne {
-	kuo.mutation.ResetHTMLCode()
-	kuo.mutation.SetHTMLCode(i)
+func (kuo *KeywordsUpdateOne) SetHTMLCode(s string) *KeywordsUpdateOne {
+	kuo.mutation.SetHTMLCode(s)
 	return kuo
 }
 
 // SetNillableHTMLCode sets the "html_code" field if the given value is not nil.
-func (kuo *KeywordsUpdateOne) SetNillableHTMLCode(i *int) *KeywordsUpdateOne {
-	if i != nil {
-		kuo.SetHTMLCode(*i)
+func (kuo *KeywordsUpdateOne) SetNillableHTMLCode(s *string) *KeywordsUpdateOne {
+	if s != nil {
+		kuo.SetHTMLCode(*s)
 	}
-	return kuo
-}
-
-// AddHTMLCode adds i to the "html_code" field.
-func (kuo *KeywordsUpdateOne) AddHTMLCode(i int) *KeywordsUpdateOne {
-	kuo.mutation.AddHTMLCode(i)
 	return kuo
 }
 
@@ -408,6 +422,9 @@ func (kuo *KeywordsUpdateOne) sqlSave(ctx context.Context) (_node *Keywords, err
 			}
 		}
 	}
+	if value, ok := kuo.mutation.Keyword(); ok {
+		_spec.SetField(keywords.FieldKeyword, field.TypeString, value)
+	}
 	if value, ok := kuo.mutation.Status(); ok {
 		_spec.SetField(keywords.FieldStatus, field.TypeEnum, value)
 	}
@@ -417,11 +434,11 @@ func (kuo *KeywordsUpdateOne) sqlSave(ctx context.Context) (_node *Keywords, err
 	if value, ok := kuo.mutation.AddedAdsAmount(); ok {
 		_spec.AddField(keywords.FieldAdsAmount, field.TypeInt, value)
 	}
-	if value, ok := kuo.mutation.Links(); ok {
-		_spec.SetField(keywords.FieldLinks, field.TypeInt, value)
+	if value, ok := kuo.mutation.LinksAmount(); ok {
+		_spec.SetField(keywords.FieldLinksAmount, field.TypeInt, value)
 	}
-	if value, ok := kuo.mutation.AddedLinks(); ok {
-		_spec.AddField(keywords.FieldLinks, field.TypeInt, value)
+	if value, ok := kuo.mutation.AddedLinksAmount(); ok {
+		_spec.AddField(keywords.FieldLinksAmount, field.TypeInt, value)
 	}
 	if value, ok := kuo.mutation.SearchResultAmount(); ok {
 		_spec.SetField(keywords.FieldSearchResultAmount, field.TypeInt, value)
@@ -430,10 +447,7 @@ func (kuo *KeywordsUpdateOne) sqlSave(ctx context.Context) (_node *Keywords, err
 		_spec.AddField(keywords.FieldSearchResultAmount, field.TypeInt, value)
 	}
 	if value, ok := kuo.mutation.HTMLCode(); ok {
-		_spec.SetField(keywords.FieldHTMLCode, field.TypeInt, value)
-	}
-	if value, ok := kuo.mutation.AddedHTMLCode(); ok {
-		_spec.AddField(keywords.FieldHTMLCode, field.TypeInt, value)
+		_spec.SetField(keywords.FieldHTMLCode, field.TypeString, value)
 	}
 	_node = &Keywords{config: kuo.config}
 	_spec.Assign = _node.assignValues

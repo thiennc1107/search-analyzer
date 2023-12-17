@@ -37,15 +37,15 @@ type KeywordsMutation struct {
 	op                      Op
 	typ                     string
 	id                      *int
+	keyword                 *string
 	status                  *keywords.Status
 	ads_amount              *int
 	addads_amount           *int
-	links                   *int
-	addlinks                *int
+	links_amount            *int
+	addlinks_amount         *int
 	search_result_amount    *int
 	addsearch_result_amount *int
-	html_code               *int
-	addhtml_code            *int
+	html_code               *string
 	clearedFields           map[string]struct{}
 	done                    bool
 	oldValue                func(context.Context) (*Keywords, error)
@@ -150,6 +150,42 @@ func (m *KeywordsMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
+// SetKeyword sets the "keyword" field.
+func (m *KeywordsMutation) SetKeyword(s string) {
+	m.keyword = &s
+}
+
+// Keyword returns the value of the "keyword" field in the mutation.
+func (m *KeywordsMutation) Keyword() (r string, exists bool) {
+	v := m.keyword
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKeyword returns the old "keyword" field's value of the Keywords entity.
+// If the Keywords object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *KeywordsMutation) OldKeyword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKeyword is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKeyword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKeyword: %w", err)
+	}
+	return oldValue.Keyword, nil
+}
+
+// ResetKeyword resets all changes to the "keyword" field.
+func (m *KeywordsMutation) ResetKeyword() {
+	m.keyword = nil
+}
+
 // SetStatus sets the "status" field.
 func (m *KeywordsMutation) SetStatus(k keywords.Status) {
 	m.status = &k
@@ -242,60 +278,60 @@ func (m *KeywordsMutation) ResetAdsAmount() {
 	m.addads_amount = nil
 }
 
-// SetLinks sets the "links" field.
-func (m *KeywordsMutation) SetLinks(i int) {
-	m.links = &i
-	m.addlinks = nil
+// SetLinksAmount sets the "links_amount" field.
+func (m *KeywordsMutation) SetLinksAmount(i int) {
+	m.links_amount = &i
+	m.addlinks_amount = nil
 }
 
-// Links returns the value of the "links" field in the mutation.
-func (m *KeywordsMutation) Links() (r int, exists bool) {
-	v := m.links
+// LinksAmount returns the value of the "links_amount" field in the mutation.
+func (m *KeywordsMutation) LinksAmount() (r int, exists bool) {
+	v := m.links_amount
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLinks returns the old "links" field's value of the Keywords entity.
+// OldLinksAmount returns the old "links_amount" field's value of the Keywords entity.
 // If the Keywords object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *KeywordsMutation) OldLinks(ctx context.Context) (v int, err error) {
+func (m *KeywordsMutation) OldLinksAmount(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLinks is only allowed on UpdateOne operations")
+		return v, errors.New("OldLinksAmount is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLinks requires an ID field in the mutation")
+		return v, errors.New("OldLinksAmount requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLinks: %w", err)
+		return v, fmt.Errorf("querying old value for OldLinksAmount: %w", err)
 	}
-	return oldValue.Links, nil
+	return oldValue.LinksAmount, nil
 }
 
-// AddLinks adds i to the "links" field.
-func (m *KeywordsMutation) AddLinks(i int) {
-	if m.addlinks != nil {
-		*m.addlinks += i
+// AddLinksAmount adds i to the "links_amount" field.
+func (m *KeywordsMutation) AddLinksAmount(i int) {
+	if m.addlinks_amount != nil {
+		*m.addlinks_amount += i
 	} else {
-		m.addlinks = &i
+		m.addlinks_amount = &i
 	}
 }
 
-// AddedLinks returns the value that was added to the "links" field in this mutation.
-func (m *KeywordsMutation) AddedLinks() (r int, exists bool) {
-	v := m.addlinks
+// AddedLinksAmount returns the value that was added to the "links_amount" field in this mutation.
+func (m *KeywordsMutation) AddedLinksAmount() (r int, exists bool) {
+	v := m.addlinks_amount
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetLinks resets all changes to the "links" field.
-func (m *KeywordsMutation) ResetLinks() {
-	m.links = nil
-	m.addlinks = nil
+// ResetLinksAmount resets all changes to the "links_amount" field.
+func (m *KeywordsMutation) ResetLinksAmount() {
+	m.links_amount = nil
+	m.addlinks_amount = nil
 }
 
 // SetSearchResultAmount sets the "search_result_amount" field.
@@ -355,13 +391,12 @@ func (m *KeywordsMutation) ResetSearchResultAmount() {
 }
 
 // SetHTMLCode sets the "html_code" field.
-func (m *KeywordsMutation) SetHTMLCode(i int) {
-	m.html_code = &i
-	m.addhtml_code = nil
+func (m *KeywordsMutation) SetHTMLCode(s string) {
+	m.html_code = &s
 }
 
 // HTMLCode returns the value of the "html_code" field in the mutation.
-func (m *KeywordsMutation) HTMLCode() (r int, exists bool) {
+func (m *KeywordsMutation) HTMLCode() (r string, exists bool) {
 	v := m.html_code
 	if v == nil {
 		return
@@ -372,7 +407,7 @@ func (m *KeywordsMutation) HTMLCode() (r int, exists bool) {
 // OldHTMLCode returns the old "html_code" field's value of the Keywords entity.
 // If the Keywords object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *KeywordsMutation) OldHTMLCode(ctx context.Context) (v int, err error) {
+func (m *KeywordsMutation) OldHTMLCode(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldHTMLCode is only allowed on UpdateOne operations")
 	}
@@ -386,28 +421,9 @@ func (m *KeywordsMutation) OldHTMLCode(ctx context.Context) (v int, err error) {
 	return oldValue.HTMLCode, nil
 }
 
-// AddHTMLCode adds i to the "html_code" field.
-func (m *KeywordsMutation) AddHTMLCode(i int) {
-	if m.addhtml_code != nil {
-		*m.addhtml_code += i
-	} else {
-		m.addhtml_code = &i
-	}
-}
-
-// AddedHTMLCode returns the value that was added to the "html_code" field in this mutation.
-func (m *KeywordsMutation) AddedHTMLCode() (r int, exists bool) {
-	v := m.addhtml_code
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetHTMLCode resets all changes to the "html_code" field.
 func (m *KeywordsMutation) ResetHTMLCode() {
 	m.html_code = nil
-	m.addhtml_code = nil
 }
 
 // Where appends a list predicates to the KeywordsMutation builder.
@@ -444,15 +460,18 @@ func (m *KeywordsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *KeywordsMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
+	if m.keyword != nil {
+		fields = append(fields, keywords.FieldKeyword)
+	}
 	if m.status != nil {
 		fields = append(fields, keywords.FieldStatus)
 	}
 	if m.ads_amount != nil {
 		fields = append(fields, keywords.FieldAdsAmount)
 	}
-	if m.links != nil {
-		fields = append(fields, keywords.FieldLinks)
+	if m.links_amount != nil {
+		fields = append(fields, keywords.FieldLinksAmount)
 	}
 	if m.search_result_amount != nil {
 		fields = append(fields, keywords.FieldSearchResultAmount)
@@ -468,12 +487,14 @@ func (m *KeywordsMutation) Fields() []string {
 // schema.
 func (m *KeywordsMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case keywords.FieldKeyword:
+		return m.Keyword()
 	case keywords.FieldStatus:
 		return m.Status()
 	case keywords.FieldAdsAmount:
 		return m.AdsAmount()
-	case keywords.FieldLinks:
-		return m.Links()
+	case keywords.FieldLinksAmount:
+		return m.LinksAmount()
 	case keywords.FieldSearchResultAmount:
 		return m.SearchResultAmount()
 	case keywords.FieldHTMLCode:
@@ -487,12 +508,14 @@ func (m *KeywordsMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *KeywordsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case keywords.FieldKeyword:
+		return m.OldKeyword(ctx)
 	case keywords.FieldStatus:
 		return m.OldStatus(ctx)
 	case keywords.FieldAdsAmount:
 		return m.OldAdsAmount(ctx)
-	case keywords.FieldLinks:
-		return m.OldLinks(ctx)
+	case keywords.FieldLinksAmount:
+		return m.OldLinksAmount(ctx)
 	case keywords.FieldSearchResultAmount:
 		return m.OldSearchResultAmount(ctx)
 	case keywords.FieldHTMLCode:
@@ -506,6 +529,13 @@ func (m *KeywordsMutation) OldField(ctx context.Context, name string) (ent.Value
 // type.
 func (m *KeywordsMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case keywords.FieldKeyword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKeyword(v)
+		return nil
 	case keywords.FieldStatus:
 		v, ok := value.(keywords.Status)
 		if !ok {
@@ -520,12 +550,12 @@ func (m *KeywordsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAdsAmount(v)
 		return nil
-	case keywords.FieldLinks:
+	case keywords.FieldLinksAmount:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLinks(v)
+		m.SetLinksAmount(v)
 		return nil
 	case keywords.FieldSearchResultAmount:
 		v, ok := value.(int)
@@ -535,7 +565,7 @@ func (m *KeywordsMutation) SetField(name string, value ent.Value) error {
 		m.SetSearchResultAmount(v)
 		return nil
 	case keywords.FieldHTMLCode:
-		v, ok := value.(int)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -552,14 +582,11 @@ func (m *KeywordsMutation) AddedFields() []string {
 	if m.addads_amount != nil {
 		fields = append(fields, keywords.FieldAdsAmount)
 	}
-	if m.addlinks != nil {
-		fields = append(fields, keywords.FieldLinks)
+	if m.addlinks_amount != nil {
+		fields = append(fields, keywords.FieldLinksAmount)
 	}
 	if m.addsearch_result_amount != nil {
 		fields = append(fields, keywords.FieldSearchResultAmount)
-	}
-	if m.addhtml_code != nil {
-		fields = append(fields, keywords.FieldHTMLCode)
 	}
 	return fields
 }
@@ -571,12 +598,10 @@ func (m *KeywordsMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case keywords.FieldAdsAmount:
 		return m.AddedAdsAmount()
-	case keywords.FieldLinks:
-		return m.AddedLinks()
+	case keywords.FieldLinksAmount:
+		return m.AddedLinksAmount()
 	case keywords.FieldSearchResultAmount:
 		return m.AddedSearchResultAmount()
-	case keywords.FieldHTMLCode:
-		return m.AddedHTMLCode()
 	}
 	return nil, false
 }
@@ -593,12 +618,12 @@ func (m *KeywordsMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddAdsAmount(v)
 		return nil
-	case keywords.FieldLinks:
+	case keywords.FieldLinksAmount:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddLinks(v)
+		m.AddLinksAmount(v)
 		return nil
 	case keywords.FieldSearchResultAmount:
 		v, ok := value.(int)
@@ -606,13 +631,6 @@ func (m *KeywordsMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddSearchResultAmount(v)
-		return nil
-	case keywords.FieldHTMLCode:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddHTMLCode(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Keywords numeric field %s", name)
@@ -641,14 +659,17 @@ func (m *KeywordsMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *KeywordsMutation) ResetField(name string) error {
 	switch name {
+	case keywords.FieldKeyword:
+		m.ResetKeyword()
+		return nil
 	case keywords.FieldStatus:
 		m.ResetStatus()
 		return nil
 	case keywords.FieldAdsAmount:
 		m.ResetAdsAmount()
 		return nil
-	case keywords.FieldLinks:
-		m.ResetLinks()
+	case keywords.FieldLinksAmount:
+		m.ResetLinksAmount()
 		return nil
 	case keywords.FieldSearchResultAmount:
 		m.ResetSearchResultAmount()

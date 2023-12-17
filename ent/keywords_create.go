@@ -19,6 +19,12 @@ type KeywordsCreate struct {
 	hooks    []Hook
 }
 
+// SetKeyword sets the "keyword" field.
+func (kc *KeywordsCreate) SetKeyword(s string) *KeywordsCreate {
+	kc.mutation.SetKeyword(s)
+	return kc
+}
+
 // SetStatus sets the "status" field.
 func (kc *KeywordsCreate) SetStatus(k keywords.Status) *KeywordsCreate {
 	kc.mutation.SetStatus(k)
@@ -31,9 +37,9 @@ func (kc *KeywordsCreate) SetAdsAmount(i int) *KeywordsCreate {
 	return kc
 }
 
-// SetLinks sets the "links" field.
-func (kc *KeywordsCreate) SetLinks(i int) *KeywordsCreate {
-	kc.mutation.SetLinks(i)
+// SetLinksAmount sets the "links_amount" field.
+func (kc *KeywordsCreate) SetLinksAmount(i int) *KeywordsCreate {
+	kc.mutation.SetLinksAmount(i)
 	return kc
 }
 
@@ -44,8 +50,8 @@ func (kc *KeywordsCreate) SetSearchResultAmount(i int) *KeywordsCreate {
 }
 
 // SetHTMLCode sets the "html_code" field.
-func (kc *KeywordsCreate) SetHTMLCode(i int) *KeywordsCreate {
-	kc.mutation.SetHTMLCode(i)
+func (kc *KeywordsCreate) SetHTMLCode(s string) *KeywordsCreate {
+	kc.mutation.SetHTMLCode(s)
 	return kc
 }
 
@@ -83,6 +89,9 @@ func (kc *KeywordsCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (kc *KeywordsCreate) check() error {
+	if _, ok := kc.mutation.Keyword(); !ok {
+		return &ValidationError{Name: "keyword", err: errors.New(`ent: missing required field "Keywords.keyword"`)}
+	}
 	if _, ok := kc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Keywords.status"`)}
 	}
@@ -94,8 +103,8 @@ func (kc *KeywordsCreate) check() error {
 	if _, ok := kc.mutation.AdsAmount(); !ok {
 		return &ValidationError{Name: "ads_amount", err: errors.New(`ent: missing required field "Keywords.ads_amount"`)}
 	}
-	if _, ok := kc.mutation.Links(); !ok {
-		return &ValidationError{Name: "links", err: errors.New(`ent: missing required field "Keywords.links"`)}
+	if _, ok := kc.mutation.LinksAmount(); !ok {
+		return &ValidationError{Name: "links_amount", err: errors.New(`ent: missing required field "Keywords.links_amount"`)}
 	}
 	if _, ok := kc.mutation.SearchResultAmount(); !ok {
 		return &ValidationError{Name: "search_result_amount", err: errors.New(`ent: missing required field "Keywords.search_result_amount"`)}
@@ -129,6 +138,10 @@ func (kc *KeywordsCreate) createSpec() (*Keywords, *sqlgraph.CreateSpec) {
 		_node = &Keywords{config: kc.config}
 		_spec = sqlgraph.NewCreateSpec(keywords.Table, sqlgraph.NewFieldSpec(keywords.FieldID, field.TypeInt))
 	)
+	if value, ok := kc.mutation.Keyword(); ok {
+		_spec.SetField(keywords.FieldKeyword, field.TypeString, value)
+		_node.Keyword = value
+	}
 	if value, ok := kc.mutation.Status(); ok {
 		_spec.SetField(keywords.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
@@ -137,16 +150,16 @@ func (kc *KeywordsCreate) createSpec() (*Keywords, *sqlgraph.CreateSpec) {
 		_spec.SetField(keywords.FieldAdsAmount, field.TypeInt, value)
 		_node.AdsAmount = value
 	}
-	if value, ok := kc.mutation.Links(); ok {
-		_spec.SetField(keywords.FieldLinks, field.TypeInt, value)
-		_node.Links = value
+	if value, ok := kc.mutation.LinksAmount(); ok {
+		_spec.SetField(keywords.FieldLinksAmount, field.TypeInt, value)
+		_node.LinksAmount = value
 	}
 	if value, ok := kc.mutation.SearchResultAmount(); ok {
 		_spec.SetField(keywords.FieldSearchResultAmount, field.TypeInt, value)
 		_node.SearchResultAmount = value
 	}
 	if value, ok := kc.mutation.HTMLCode(); ok {
-		_spec.SetField(keywords.FieldHTMLCode, field.TypeInt, value)
+		_spec.SetField(keywords.FieldHTMLCode, field.TypeString, value)
 		_node.HTMLCode = value
 	}
 	return _node, _spec

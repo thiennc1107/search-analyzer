@@ -16,16 +16,18 @@ type Keywords struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Keyword holds the value of the "keyword" field.
+	Keyword string `json:"keyword,omitempty"`
 	// Status holds the value of the "status" field.
 	Status keywords.Status `json:"status,omitempty"`
 	// AdsAmount holds the value of the "ads_amount" field.
 	AdsAmount int `json:"ads_amount,omitempty"`
-	// Links holds the value of the "links" field.
-	Links int `json:"links,omitempty"`
+	// LinksAmount holds the value of the "links_amount" field.
+	LinksAmount int `json:"links_amount,omitempty"`
 	// SearchResultAmount holds the value of the "search_result_amount" field.
 	SearchResultAmount int `json:"search_result_amount,omitempty"`
 	// HTMLCode holds the value of the "html_code" field.
-	HTMLCode     int `json:"html_code,omitempty"`
+	HTMLCode     string `json:"html_code,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -34,9 +36,9 @@ func (*Keywords) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case keywords.FieldID, keywords.FieldAdsAmount, keywords.FieldLinks, keywords.FieldSearchResultAmount, keywords.FieldHTMLCode:
+		case keywords.FieldID, keywords.FieldAdsAmount, keywords.FieldLinksAmount, keywords.FieldSearchResultAmount:
 			values[i] = new(sql.NullInt64)
-		case keywords.FieldStatus:
+		case keywords.FieldKeyword, keywords.FieldStatus, keywords.FieldHTMLCode:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -59,6 +61,12 @@ func (k *Keywords) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			k.ID = int(value.Int64)
+		case keywords.FieldKeyword:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field keyword", values[i])
+			} else if value.Valid {
+				k.Keyword = value.String
+			}
 		case keywords.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
@@ -71,11 +79,11 @@ func (k *Keywords) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				k.AdsAmount = int(value.Int64)
 			}
-		case keywords.FieldLinks:
+		case keywords.FieldLinksAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field links", values[i])
+				return fmt.Errorf("unexpected type %T for field links_amount", values[i])
 			} else if value.Valid {
-				k.Links = int(value.Int64)
+				k.LinksAmount = int(value.Int64)
 			}
 		case keywords.FieldSearchResultAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -84,10 +92,10 @@ func (k *Keywords) assignValues(columns []string, values []any) error {
 				k.SearchResultAmount = int(value.Int64)
 			}
 		case keywords.FieldHTMLCode:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field html_code", values[i])
 			} else if value.Valid {
-				k.HTMLCode = int(value.Int64)
+				k.HTMLCode = value.String
 			}
 		default:
 			k.selectValues.Set(columns[i], values[i])
@@ -125,20 +133,23 @@ func (k *Keywords) String() string {
 	var builder strings.Builder
 	builder.WriteString("Keywords(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", k.ID))
+	builder.WriteString("keyword=")
+	builder.WriteString(k.Keyword)
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", k.Status))
 	builder.WriteString(", ")
 	builder.WriteString("ads_amount=")
 	builder.WriteString(fmt.Sprintf("%v", k.AdsAmount))
 	builder.WriteString(", ")
-	builder.WriteString("links=")
-	builder.WriteString(fmt.Sprintf("%v", k.Links))
+	builder.WriteString("links_amount=")
+	builder.WriteString(fmt.Sprintf("%v", k.LinksAmount))
 	builder.WriteString(", ")
 	builder.WriteString("search_result_amount=")
 	builder.WriteString(fmt.Sprintf("%v", k.SearchResultAmount))
 	builder.WriteString(", ")
 	builder.WriteString("html_code=")
-	builder.WriteString(fmt.Sprintf("%v", k.HTMLCode))
+	builder.WriteString(k.HTMLCode)
 	builder.WriteByte(')')
 	return builder.String()
 }
