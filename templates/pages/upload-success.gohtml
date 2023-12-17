@@ -1,0 +1,15 @@
+{{define "content"}}
+    <div class="notification is-success" hx-indicator="#spinner">
+        <h2 class="title">Upload Successful</h1>
+        <p>Your CSV file was successfully uploaded.
+            You can view the process in dashboard</p>
+        <p>What would you like to do next?</p>
+
+        <div class="pt-3">
+            <!-- Link to go back to the home page -->
+            <a href="/" class="button is-info">Go Home</a>
+            <!-- Link to upload another file -->
+            <a href="/upload" class="button is-primary">Upload Another File</a>
+        </div>
+    </div>
+{{end}}

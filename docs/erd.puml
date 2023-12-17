@@ -1,0 +1,32 @@
+@startuml Database diagram
+entity "users" as user {
+    * id: integer <<PK>>
+    name: varchar
+    email: varchar
+    password: varchar
+    verified: bool
+    --
+    created_at: timestamp <<NOW>>
+}
+
+entity "password_token" as passwordToken {
+    * id: integer <<PK>>
+    hash: varchar
+    password_token_user: integer <<FK>>
+    --
+    created_at: timestamp <<NOW>>
+}
+
+entity "keyword" as kw {
+    * id: integer <<PK>>
+    status: varchar
+    adword_ad_amount: integer
+    links_amount: integer
+    search_result_amount: integer
+    html_code: text
+}
+
+user ||--o{ passwordToken
+
+
+@enduml

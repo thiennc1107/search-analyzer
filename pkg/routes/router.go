@@ -62,6 +62,7 @@ func BuildRouter(c *services.Container) {
 	// Example routes
 	navRoutes(c, g, ctr)
 	userRoutes(c, g, ctr)
+	fileRoutes(c, g, ctr)
 }
 
 func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
@@ -71,9 +72,17 @@ func navRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) 
 
 	search := search{Controller: ctr}
 	auth.GET("/search", search.Get).Name = "search"
+	upload := upload{Controller: ctr}
+	auth.GET("/upload", upload.Get).Name = "upload"
 
 	about := about{Controller: ctr}
 	auth.GET("/about", about.Get).Name = "about"
+}
+
+func fileRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
+	upload := upload{Controller: ctr}
+	auth := g.Group("/file", middleware.RequireAuthentication())
+	auth.POST("/upload", upload.Post).Name = "upload-post"
 }
 
 func userRoutes(c *services.Container, g *echo.Group, ctr controller.Controller) {
