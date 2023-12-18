@@ -27,22 +27,36 @@
 
 {{define "posts"}}
     <div id="posts">
+        <div class="columns is-multiline">
         {{- range .Data}}
-            <article class="media">
-                <div class="media-content">
+        <div class="column is-half">
+            <div class="card">
+                <div class="card-header px-5 is-size-4">
+                    {{.Keyword}}
+                </div>
+                <div class="class-content px-5 pt-5">
                     <div class="content">
+                        <p>Status: <span class="tag {{.StatusTag}}">{{.Status}}</span></p>
                         <p>
-                            <strong>{{.Title}}</strong>
-                            <br>
-                            {{.Body}}
+                            <span><i class="fa-solid fa-rectangle-ad"></i> Ad Count: {{.AdsAmount}}</span>
+                            <span class="has-text-grey-light px-1"> | </span>
+                            <span><i class="fa-solid fa-link"></i> Link Count: {{.LinksAmount}}</span>
+                            <span class="has-text-grey-light px-1"> | </span>
+                            <span><i class="fa-brands fa-searchengin"></i> Search Result Count: {{.SearchResultAmount}}</span>
                         </p>
                     </div>
                 </div>
-            </article>
+                <footer class="card-footer is-hoverable is-shadow-hover">
+                    <a href="/download/{{.DownloadHtmlLink}}" class="card-footer-item 
+                    has-text-weight-bold">Download HTML</a>
+                </footer>
+            </div>
+        </div>
         {{- end}}
+        </div>
 
         <div class="column">
-            <p>Current page: {{$.Pager.Page}}</p>
+            <p>Current page: {{$.Pager.Page}} of total {{$.Pager.Pages}}</p>
             <div class="field is-grouped is-grouped-centered pt-5">
                 {{- if not $.Pager.IsBeginning}}
                     <p class="control">

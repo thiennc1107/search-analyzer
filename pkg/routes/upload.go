@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"context"
 	"encoding/csv"
 	"fmt"
 
@@ -68,12 +69,17 @@ func (c *upload) handleFileUpload(ctx echo.Context) error {
 
 	c.Container.Web.Logger.Debug("Saving data")
 
-	_, err = c.Container.ORM.Keywords.CreateBulk(dtos...).Save(ctx.Request().Context())
+	res, err := c.Container.ORM.Keywords.CreateBulk(dtos...).Save(ctx.Request().Context())
 	if err != nil {
 		return failure.ErrWithTrace(err)
 	}
 
+	go c.syncBackground(context.Background(), res)
+
 	return nil
+}
+
+func (c *upload) syncBackground(ctx context.Context, kws []*ent.Keywords) {
 }
 
 func (c *upload) bindCsv(ctx echo.Context, fileName string) ([][]string, error) {

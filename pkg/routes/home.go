@@ -1,9 +1,11 @@
 package routes
 
 import (
-	"fmt"
+	"context"
 
+	"github.com/mikestefanello/pagoda/enum"
 	"github.com/mikestefanello/pagoda/pkg/controller"
+	"github.com/mikestefanello/pagoda/pkg/failure"
 
 	"github.com/labstack/echo/v4"
 )
@@ -13,9 +15,14 @@ type (
 		controller.Controller
 	}
 
-	post struct {
-		Title string
-		Body  string
+	keyword struct {
+		Keyword            string
+		Status             string
+		StatusTag          string
+		AdsAmount          int
+		LinksAmount        int
+		SearchResultAmount int
+		DownloadHtmlLink   string
 	}
 )
 
@@ -26,21 +33,55 @@ func (c *home) Get(ctx echo.Context) error {
 	page.Metatags.Description = "Welcome to the homepage."
 	page.Metatags.Keywords = []string{"Go", "MVC", "Web", "Software", "Search result", "Statistic"}
 	page.Pager = controller.NewPager(ctx, 10)
-	page.Data = c.fetchPosts(&page.Pager)
-
+	data, err := c.fetchKeywords(ctx.Request().Context(), &page.Pager)
+	if err != nil {
+		return failure.ErrWithTrace(err)
+	}
+	page.Data = data
 	return c.RenderPage(ctx, page)
 }
 
-// fetchPosts is an mock example of fetching posts to illustrate how paging works
-func (c *home) fetchPosts(pager *controller.Pager) []post {
-	pager.SetItems(20)
-	posts := make([]post, 20)
-
-	for k := range posts {
-		posts[k] = post{
-			Title: fmt.Sprintf("Post example #%d", k+1),
-			Body:  fmt.Sprintf("Lorem ipsum example #%d ddolor sit amet, consectetur adipiscing elit. Nam elementum vulputate tristique.", k+1),
-		}
+// fetchKeywords is an mock example of fetching posts to illustrate how paging works
+func (c *home) fetchKeywords(ctx context.Context, pager *controller.Pager) ([]keyword, error) {
+	keywordData, err := c.Container.ORM.Keywords.Query().All(ctx)
+	if err != nil {
+		return nil, failure.ErrWithTrace(err)
 	}
-	return posts[pager.GetOffset() : pager.GetOffset()+pager.ItemsPerPage]
+
+	kws := make([]keyword, 0, len(keywordData))
+
+	for _, val := range keywordData {
+		kws = append(kws, keyword{
+			Status:             val.Status.String(),
+			StatusTag:          statusToTag(val.Status.String()),
+			Keyword:            val.Keyword,
+			AdsAmount:          val.AdsAmount,
+			LinksAmount:        val.LinksAmount,
+			SearchResultAmount: val.SearchResultAmount,
+		})
+	}
+
+	start := 0
+	end := len(kws)
+	if pager.GetOffset() < len(kws) {
+		start = pager.GetOffset()
+	}
+
+	if pager.GetOffset()+pager.ItemsPerPage < len(kws) {
+		end = pager.GetOffset() + pager.ItemsPerPage
+	}
+	return kws[start:end], nil
+}
+
+func statusToTag(status string) string {
+	switch status {
+	case enum.StatusFailed:
+		return "is-danger"
+	case enum.StatusProcessing:
+		return "is-warning"
+	case enum.StatusFinished:
+		return "is-success"
+	default:
+		return ""
+	}
 }
